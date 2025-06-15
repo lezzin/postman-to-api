@@ -1,4 +1,4 @@
-import json, argparse, logging, os
+import json, logging, os
 
 from pathlib import Path
 from html import escape
@@ -599,11 +599,7 @@ class PostmanDocGenerator:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Gerador de documentação HTML a partir de coleção Postman.")
-    parser.add_argument("folder", help="Pasta onde estão os arquivos .postman_collection.json (ex: 'postman')")
-    args = parser.parse_args()
-
-    folder = args.folder
+    folder = "postman"
     generated_docs = []
 
     generator = PostmanDocGenerator()
