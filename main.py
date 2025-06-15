@@ -365,6 +365,7 @@ class PostmanDocGenerator:
             f.write("  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
             f.write("  <title>Documentação das APIs - Índice</title>\n")
             f.write(get_file('public/index.css', 'style'))
+            f.write(get_file("public/api.js", 'script'))
             f.write("</head>\n<body>\n")
             f.write("<div class='container'>\n")
             f.write("<h1>Documentação das APIs</h1>\n<ul>\n")

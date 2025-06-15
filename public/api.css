@@ -51,6 +51,8 @@
 }
 
 button {
+    background: transparent;
+    border: none;
     cursor: pointer;
     font: inherit;
 }
@@ -221,6 +223,7 @@ body {
 .send-back {
     font-size: 1rem;
     color: rgb(var(--link-color));
+    background-color: rgb(var(--link-color) / 0.14);
     text-decoration: none;
     padding: 6px 12px;
     border: 2px solid rgb(var(--link-color));

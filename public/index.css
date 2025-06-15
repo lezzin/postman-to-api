@@ -1,13 +1,23 @@
 :root {
-    --text-color: 51 51 51;
-    --background-color: 248 249 250;
+    --background-color: 245 247 250;
     --container-bg: 255 255 255;
-    --heading-color: 44 62 80;
-    --heading-border: 52 152 219;
-    --link-color: 52 152 219;
-    --link-hover-bg: 227 242 253;
-    --link-hover-color: 26 115 232;
-    --shadow-color: 0 0 0;
+    --text-color: 44 62 80;
+    --link-color: 41 128 185;
+    --border-color: 223 230 236;
+    --white: 255 255 255;
+    --blue: 52 152 219;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] {
+    --background-color: 17 24 39;
+    --container-bg: 31 41 55;
+    --text-color: 229 231 235;
+    --link-color: 96 165 250;
+    --border-color: 55 65 81;
+    --white: 0 0 0;
+    --blue: 59 130 246;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 /* === RESET === */
@@ -72,8 +82,8 @@ a {
 
 a:hover,
 a:focus {
-    background-color: rgb(var(--link-hover-bg));
-    color: rgb(var(--link-hover-color));
+    background: rgb(var(--blue));
+    color: rgb(var(--white));
     text-decoration: none;
     outline: none;
 }
