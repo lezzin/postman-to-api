@@ -1,0 +1,281 @@
+.json-highlight {
+    background-color: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.9em;
+}
+
+.json-highlight .k {
+    color: #008000;
+}
+
+.json-highlight .s2 {
+    color: #ba2121;
+}
+
+.json-highlight .mi {
+    color: #0000ff;
+}
+
+.json-highlight .p {
+    color: #000000;
+}
+
+.json-highlight .nt {
+    color: #c34e00;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.send-back {
+    font-size: 1rem;
+    color: #3498db;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 2px solid #3498db;
+    border-radius: 6px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    user-select: none;
+}
+
+.send-back:hover,
+.send-back:focus {
+    background-color: #3498db;
+    color: white;
+    outline: none;
+    text-decoration: none;
+}
+
+h1 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+h2 {
+    color: #34495e;
+    margin-top: 30px;
+    padding: 10px;
+    background: #ecf0f1;
+    border-left: 4px solid #3498db;
+}
+
+h3 {
+    color: #7f8c8d;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+h4 {
+    color: #27ae60;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.method-div {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    margin-top: 20px;
+}
+
+.method,
+.url {
+    padding: 4px 8px;
+}
+
+.method {
+    display: inline-block;
+    border-radius: 4px 0 0 4px;
+    color: white;
+    font-weight: bold;
+}
+
+.method.GET {
+    background-color: #27ae60;
+}
+
+.method.POST {
+    background-color: #e67e22;
+}
+
+.method.PUT {
+    background-color: #3498db;
+}
+
+.method.DELETE {
+    background-color: #e74c3c;
+}
+
+.method.PATCH {
+    background-color: #9b59b6;
+}
+
+.url {
+    font-family: "Monaco", "Menlo", monospace;
+    background: #f4f4f4;
+    border-radius: 0 4px 4px 0;
+    word-break: break-all;
+}
+
+.headers,
+.body {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.headers ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.headers li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    font-family: monospace;
+}
+
+.headers li:last-child {
+    border-bottom: none;
+}
+
+pre {
+    background: #2c3e50;
+    color: #111;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.9em;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.status.success {
+    background-color: #27ae60;
+}
+
+.status.error {
+    background-color: #e74c3c;
+}
+
+.status.warning {
+    background-color: #f39c12;
+}
+
+.status.success ~ span {
+    color: #27ae60;
+}
+
+.status.error ~ span {
+    color: #e74c3c;
+}
+
+.status.warning ~ span {
+    color: #f39c12;
+}
+
+.divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #3498db, transparent);
+    margin: 30px 0;
+}
+
+.meta-info {
+    background: #e8f4fd;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3498db;
+}
+
+.toc {
+    background: #f8f9fa;
+    padding: 0 20px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    border: 1px solid #dee2e6;
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.toc > ul {
+    padding-left: 0;
+}
+
+.toc li {
+    margin: 8px 0;
+    line-height: 1.4;
+    width: 100%;
+}
+
+.toc li strong {
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.toc a {
+    text-decoration: none;
+    color: #3498db;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    display: inline-block;
+    width: 100%;
+}
+
+.toc a:hover {
+    background-color: #e3f2fd;
+    text-decoration: none;
+}
