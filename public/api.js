@@ -1,3 +1,7 @@
+const sidebar = document.getElementById("sidebar");
+const themeButton = document.querySelector(".send-back.theme");
+const sidebarToggleButton = document.querySelector(".sidebar-toggle");
+
 function toggleTheme(button) {
     const html = document.documentElement;
     const isLight = (html.dataset.theme ?? "light") === "light";
@@ -13,7 +17,6 @@ function loadTheme() {
     const savedTheme = localStorage.getItem("theme") || "light";
     document.documentElement.dataset.theme = savedTheme;
 
-    const themeButton = document.querySelector(".send-back.theme");
     if (themeButton) {
         updateThemeButton(themeButton, savedTheme);
     }
@@ -25,7 +28,6 @@ function updateThemeButton(button, theme) {
 }
 
 function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
     sidebar.classList.toggle("active");
 }
 
@@ -41,6 +43,12 @@ document.querySelectorAll('.sidebar a[href^="#"]').forEach((link) => {
             document.getElementById("sidebar").classList.remove("active");
         }
     });
+});
+
+document.addEventListener("click", (event) => {
+    if (!sidebar.contains(event.target) && !sidebarToggleButton.contains(event.target) && sidebar.classList.contains("active")) {
+        sidebar.classList.remove("active");
+    }
 });
 
 loadTheme();

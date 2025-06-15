@@ -11,6 +11,13 @@ load_dotenv(find_dotenv(), override=True)
 
 max_key_length = int(os.getenv("MAX_KEY_LENGTH", "1000"))
 max_array_items = int(os.getenv("MAX_ARRAY_ITEMS", "5"))
+
+sensitive_keys = {
+    key.strip().lower() 
+    for key in os.getenv("SENSITIVE_KEYS", "password").split(",")
+    if key.strip()
+}
+
 base64_pattern = re.compile(r'^[A-Za-z0-9+/]*={0,2}$')
 
 def get_file(file: str, tag: str) -> str:
@@ -102,5 +109,9 @@ def truncate_large_content(obj: Any, current_depth: int = 0, max_depth: int = 5)
     
     return obj
 
-def format_title(text:str):
+def format_title(text: str):
     return text.upper()
+
+def is_sensitive_key(key: str) -> bool:
+    key_lower = key.lower()
+    return any(sensitive in key_lower for sensitive in sensitive_keys)

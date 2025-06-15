@@ -19,7 +19,6 @@ class PostmanDocGenerator:
         self.max_json_length = int(os.getenv("MAX_JSON_LENGTH", "5000"))
 
         self.json_start_pattern = re.compile(r'^\s*[{\[]')
-        self.sensitive_keys = {}
     
     def _setup_logging(self) -> None:
         logging.basicConfig(
@@ -27,10 +26,6 @@ class PostmanDocGenerator:
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
         self.logger = logging.getLogger(__name__)
-
-    def _is_sensitive_key(self, key: str) -> bool:
-        key_lower = key.lower()
-        return any(sensitive in key_lower for sensitive in self.sensitive_keys)
 
     def _process_content_for_display(self, content: Any, parent_key: str = '') -> Any:
         if isinstance(content, dict):
@@ -46,17 +41,9 @@ class PostmanDocGenerator:
             ]
         
         elif isinstance(content, str):
-            if self._is_sensitive_key(parent_key):
+            if is_sensitive_key(parent_key) or is_base64(content) or len(content) > 800:
                 return "..."
-            
-            if(len(content) > 800):
-                return "..."
-            
-            if is_base64(content):
-                return "..."
-            
             return content
-        
         return content
 
     def _render_json_block(self, content: Any, type: str, max_length: int = None):
@@ -385,7 +372,7 @@ class PostmanDocGenerator:
             get_file('public/api.css', 'style'),
             "</head>",
             "<body>",
-            "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
+            "",
             "<div class='main-layout'>",
         ]
         
@@ -410,7 +397,6 @@ class PostmanDocGenerator:
                 get_file('public/api.css', 'style'),
                 "</head>",
                 "<body>",
-                "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
                 "<div class='main-layout'>",
             ]
         
@@ -426,7 +412,10 @@ class PostmanDocGenerator:
         
         self.html_output.append(f"""
         <header class="page-header">
-            <h1>📚 {collection_name}</h1>
+            <h1>
+                <button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>
+                📚 {collection_name}
+            </h1>
             <div>
                 <button onclick="toggleTheme(this)" class="send-back theme" title="Alternar tema">🌑 Escuro</button>
                 <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>

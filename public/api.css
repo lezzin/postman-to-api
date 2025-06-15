@@ -46,10 +46,33 @@
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(var(--highlight-bg));
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--gray-medium));
+    border-radius: 6px;
+    border: 2px solid rgb(var(--highlight-bg));
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--text-color));
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--gray-medium)) rgb(var(--highlight-bg));
 }
 
 button {
@@ -73,20 +96,21 @@ body {
 }
 
 .main-layout {
-    display: flex;
     background-color: rgb(var(--background-color));
     min-height: 100vh;
 }
 
 .right-content {
-    flex: 1;
     margin-left: var(--sidebar-width);
 }
 
 .right-content-data {
-    padding-inline: 24px;
-    width: calc(100vw - var(--sidebar-width) - 24px);
+    --__padding: 24px;
+
+    padding-inline: var(--__padding);
+    width: calc(100vw - var(--sidebar-width) - var(--__padding));
     overflow: hidden;
+    margin: 0 auto;
 }
 
 .sidebar {
@@ -161,21 +185,16 @@ body {
 
 .sidebar-toggle {
     display: none;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
     background: rgb(var(--blue));
     color: rgb(var(--white));
-    border: none;
-    padding: 10px;
+    padding: 4px 10px;
     border-radius: 5px;
-    cursor: pointer;
+    z-index: 999;
 }
 
 @media (max-width: 768px) {
     .sidebar-toggle {
-        display: block;
+        display: initial;
     }
 
     .sidebar {
@@ -189,8 +208,10 @@ body {
 
     .right-content {
         margin-left: 0;
-        max-width: 100vw;
-        padding: 60px 20px 20px;
+    }
+
+    .right-content-data {
+        width: calc(100vw - var(--__padding));
     }
 }
 
@@ -221,6 +242,9 @@ body {
 }
 
 .page-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     color: rgb(var(--text-color));
     font-size: 2rem;
     font-weight: 700;
@@ -233,7 +257,7 @@ body {
     background-color: rgb(var(--link-color) / 0.14);
     text-decoration: none;
     padding: 6px 12px;
-    border: 2px solid rgb(var(--link-color));
+    border: 2px solid rgb(var(--link-color) / 0.2);
     border-radius: 6px;
     transition: 0.2s ease;
     user-select: none;
@@ -300,15 +324,19 @@ h4 {
 .method.GET {
     background-color: rgb(var(--green));
 }
+
 .method.POST {
     background-color: rgb(var(--orange));
 }
+
 .method.PUT {
     background-color: rgb(var(--blue));
 }
+
 .method.DELETE {
     background-color: rgb(var(--red));
 }
+
 .method.PATCH {
     background-color: rgb(var(--purple));
 }
@@ -382,18 +410,23 @@ h4 {
 .description h1 {
     font-size: 1.5em;
 }
+
 .description h2 {
     font-size: 1.3em;
 }
+
 .description h3 {
     font-size: 1.15em;
 }
+
 .description h4 {
     font-size: 1.05em;
 }
+
 .description h5 {
     font-size: 1em;
 }
+
 .description h6 {
     font-size: 0.95em;
 }
@@ -457,7 +490,7 @@ h4 {
 
 .headers li {
     padding: 6px 0;
-    border-bottom: 1px solid rgb(225 225 225);
+    border-bottom: 1px solid rgb(var(--gray-border));
     font-family: monospace;
 }
 
@@ -488,9 +521,11 @@ h4 {
 .status.success {
     background-color: rgb(var(--green));
 }
+
 .status.error {
     background-color: rgb(var(--red));
 }
+
 .status.warning {
     background-color: rgb(var(--yellow));
 }
@@ -499,10 +534,12 @@ h4 {
     background-color: rgb(var(--green) / 0.14);
     color: rgb(var(--green));
 }
+
 .status.error ~ span {
     background-color: rgb(var(--red) / 0.14);
     color: rgb(var(--red));
 }
+
 .status.warning ~ span {
     background-color: rgb(var(--yellow) / 0.14);
     color: rgb(var(--yellow));
