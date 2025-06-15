@@ -6,9 +6,7 @@ from html import escape
 from typing import Dict, List, Any
 from datetime import datetime
 
-from pygments import highlight
-from pygments.lexers import JsonLexer
-from pygments.formatters import HtmlFormatter
+from src.utils import *
 
 load_dotenv(find_dotenv(), override=True)   
 
@@ -25,40 +23,22 @@ class PostmanDocGenerator:
         )
 
         self.logger = logging.getLogger(__name__)
-    
-    def _get_css_styles(self, file: str) -> str:
-        with open(file, 'r', encoding='utf-8') as f:
-            return f"<style>{f.read()}</style>"
-    
-    def _format_json(self, json_data: str) -> str:
-        try:
-            parsed = json.loads(json_data)
-            pretty_json = json.dumps(parsed, indent=2, ensure_ascii=False)
-            return highlight(pretty_json, JsonLexer(), HtmlFormatter(nowrap=True))
-        except json.JSONDecodeError:
-            import html
-            return html.escape(json_data)
         
-    def _get_status_class(self, status_code: int) -> str:
-        if 200 <= status_code < 300:
-            return "success"
-        elif 400 <= status_code < 500:
-            return "warning"
-        elif status_code >= 500:
-            return "error"
-        return ""
-    
-    def _generate_item_id(self, name: str) -> str:
-        return name.lower().replace(" ", "-").replace("/", "-")
-    
     def _render_json_block(self, content: Any, type: str, max_length: int = 5000,):
+        if content is None:
+            self.html_output.append('<div class="headers">')
+            self.html_output.append(f'<h4>{type.capitalize()} body:</h4>')
+            self.html_output.append('<ul><li>Nenhum conteúdo no corpo da requisição/resposta.</li></ul>')
+            self.html_output.append('</div>')
+            return
+
         if isinstance(content, str) and len(content) > max_length:
             content = content[:max_length] + "\n..."
 
         if isinstance(content, str) and content.strip().startswith(('{', '[')):
-            formatted = self._format_json(content)
+            formatted = format_json(content)
         elif isinstance(content, (dict, list)):
-            formatted = self._format_json(json.dumps(content, indent=2, ensure_ascii=False))
+            formatted = format_json(json.dumps(content, indent=2, ensure_ascii=False))
         else:
             formatted = escape(str(content))
 
@@ -92,7 +72,7 @@ class PostmanDocGenerator:
                     body = body_data["urlencoded"]
 
             item_name = item.get("name", "Sem nome")
-            item_id = self._generate_item_id(item_name)
+            item_id = generate_item_id(item_name)
             
             self.html_output.append(f'<h2 id="{item_id}">{escape(item_name)}</h2>')
             
@@ -121,8 +101,7 @@ class PostmanDocGenerator:
                 self.html_output.append('</ul>')
                 self.html_output.append('</div>')
             
-            if body:
-                self._render_json_block(body, 'request')
+            self._render_json_block(body if body else None, 'request')
             
             responses = item.get("response", [])
             if responses:
@@ -130,11 +109,11 @@ class PostmanDocGenerator:
                 for response in responses:
                     status_code = response.get("code", 0)
                     status_text = response.get("status", "")
-                    status_class = self._get_status_class(status_code)
+                    status_class = get_status_class(status_code)
                     
-                    self.html_output.append(f'<h4><span class="status {status_class}">{status_code}</span><span>{escape(status_text)}</span></h4>')
+                    self.html_output.append(f'<h4 class="status-div"><span class="status {status_class}">{status_code}</span><span>{escape(status_text)}</span></h4>')
                     
-                    response_headers_whitelist = [h.strip().lower() for h in os.getenv("REQUEST_HEADERS_WHITELIST").split(",") if h.strip()]
+                    response_headers_whitelist = [h.strip().lower() for h in os.getenv("REQUEST_HEADERS_WHITELIST", "").split(",") if h.strip()]
                     response_headers = response.get("header", [])
 
                     if response_headers:
@@ -176,7 +155,7 @@ class PostmanDocGenerator:
             is_folder = any(ci.get("name") == folder_name for ci in collection_items)
 
             if is_folder:
-                folder_id = self._generate_item_id(folder_name)
+                folder_id = generate_item_id(folder_name)
 
                 toc_items.append({
                     "name": folder_name,
@@ -188,7 +167,7 @@ class PostmanDocGenerator:
 
                 if not item.get("request"):
                     self.html_output.append(
-                        f'<h2 id="{folder_id}" style="margin-top: 40px; color: #2c3e50;">📁 {escape(folder_name)}</h2>'
+                        f'<h2 id="{folder_id}" class="folder-name">📁 {escape(folder_name)}</h2>'
                     )
 
                 folder_desc = item.get("description", "")
@@ -206,7 +185,7 @@ class PostmanDocGenerator:
 
             else:
                 item_name = item.get("name", "Sem nome")
-                item_id = self._generate_item_id(item_name)
+                item_id = generate_item_id(item_name)
 
                 toc_items.append({
                     "name": item_name,
@@ -220,21 +199,6 @@ class PostmanDocGenerator:
 
         return toc_items
 
-    
-    def _get_method_icon(self, method: str) -> str:
-        """Get icon for HTTP method"""
-        icons = {
-            "GET": "🔍",
-            "POST": "📝",
-            "PUT": "✏️",
-            "DELETE": "🗑️",
-            "PATCH": "🔧",
-            "HEAD": "👀",
-            "OPTIONS": "⚙️"
-        }
-
-        return icons.get(method.upper(), "📡")
-    
     def _generate_toc(self, toc_items: List[Dict[str, str]]) -> List[str]:
         if not toc_items:
             return []
@@ -244,7 +208,7 @@ class PostmanDocGenerator:
         toc_html.append('<h2>📋 Índice</h2>')
 
         current_level = 0
-        toc_html.append('<ul>') 
+        toc_html.append('<ul class="toc-list">') 
 
         for item in toc_items:
             level = item.get("level", 0)
@@ -262,10 +226,10 @@ class PostmanDocGenerator:
                 toc_html.append('  ' * current_level + '</ul>')
 
             if item_type == "folder":
-                toc_html.append('  ' * current_level + f'<li><strong>📁 <a href="#{item_id}">{name}</a></strong></li>')
+                toc_html.append('  ' * current_level + f'<li><a href="#{item_id}">📁 {name}</a></li>')
             else:
-                method_icon = self._get_method_icon(method)
-                toc_html.append('  ' * current_level + f'<li class="item">{method_icon} <a href="#{item_id}">{name}</a></li>')
+                method_icon = get_method_icon(method)
+                toc_html.append('  ' * current_level + f'<li class="item"><a href="#{item_id}">{method_icon} {name}</a></li>')
 
         while current_level > 0:
             current_level -= 1
@@ -292,7 +256,7 @@ class PostmanDocGenerator:
             raise json.JSONDecodeError(f"Erro ao decodificar JSON: {e}", e.doc, e.pos)
         
         info = collection.get("info", {})
-        collection_name = info.get("name", "Documentação da API")
+        collection_name = str(escape(info.get("name", 'API'))).capitalize()
         collection_description = info.get("description", "")
         collection_version = info.get("version", "")
         
@@ -302,18 +266,54 @@ class PostmanDocGenerator:
             "<head>",
             "<meta charset='utf-8'>",
             "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
-            f"<title>{escape(collection_name)}</title>",
-            self._get_css_styles('src/api.css'),
+            f"<title>Documentação das APIs - {collection_name}</title>",
+            get_css_styles('public/api.css'),
             "</head>",
             "<body>",
-            "<div class='container'>",
-            f"""
-            <header class="page-header">
-                <h1>📚 {escape(collection_name)}</h1>
-                <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>
-            </header>
-            """
+            "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
+            "<div class='main-layout'>",
         ]
+        
+        items = collection.get("item", [])
+        toc_items = []
+        content_html = []
+        
+        if items:
+            temp_html = []
+            self.html_output = temp_html 
+            
+            toc_items = self._process_items(collection, items)
+            content_html = self.html_output.copy()
+            
+            self.html_output = [
+                "<!DOCTYPE html>",
+                "<html lang='pt-BR'>",
+                "<head>",
+                "<meta charset='utf-8'>",
+                "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
+                f"<title>Documentação das APIs - {collection_name}</title>",
+                get_css_styles('public/api.css'),
+                "</head>",
+                "<body>",
+                "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
+                "<div class='main-layout'>",
+            ]
+        
+        self.html_output.append('<div class="sidebar" id="sidebar">')
+        if toc_items:
+            toc_html = self._generate_toc(toc_items)
+            self.html_output.extend(toc_html)
+        else:
+            self.html_output.append('<div class="toc"><h2>📋 Índice</h2><p>Nenhum item encontrado.</p></div>')
+        self.html_output.append('</div>')
+        
+        self.html_output.append('<div class="content">')
+        self.html_output.append(f"""
+        <header class="page-header">
+            <h1>📚 {collection_name}</h1>
+            <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>
+        </header>
+        """)
         
         if collection_description or collection_version:
             self.html_output.append('<div class="meta-info">')
@@ -324,26 +324,40 @@ class PostmanDocGenerator:
             self.html_output.append(f'<p><strong>Gerado em:</strong> {datetime.now().strftime("%d/%m/%Y às %H:%M")}</p>')
             self.html_output.append('</div>')
         
-        items = collection.get("item", [])
-        if items:
-            temp_html = self.html_output.copy()  
-            self.html_output = []  
-            
-            toc_items = self._process_items(collection, items)
-            items_html = self.html_output.copy()  
-            
-            self.html_output = temp_html
-            toc_html = self._generate_toc(toc_items)
-            self.html_output.extend(toc_html)
-            
-            self.html_output.extend(items_html)
-            
+        if content_html:
+            self.html_output.extend(content_html)
             self.logger.info(f"Processados {len([item for item in toc_items if item.get('type') == 'item'])} endpoints")
         else:
             self.html_output.append("<p>⚠️ Nenhum item encontrado na coleção.</p>")
         
+        self.html_output.append('</div>')  
+        self.html_output.append('</div>')
+        
+        self.html_output.append("""
+        <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        document.querySelectorAll('.sidebar a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                
+                // Fechar sidebar no mobile após clicar
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+        </script>
+        """)
+        
         self.html_output.extend([
-            "</div>",
             "</body>",
             "</html>"
         ])
@@ -365,7 +379,7 @@ class PostmanDocGenerator:
             f.write("  <meta charset='UTF-8'>\n")
             f.write("  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
             f.write("  <title>Documentação das APIs - Índice</title>\n")
-            f.write(self._get_css_styles('src/index.css'))
+            f.write(get_css_styles('public/index.css'))
             f.write("</head>\n<body>\n")
             f.write("<div class='container'>\n")
             f.write("<h1>Documentação das APIs</h1>\n<ul>\n")
@@ -381,7 +395,7 @@ class PostmanDocGenerator:
 
 
 def main():
-    folder = "postman"
+    folder = os.getenv("POSTMAN_FOLDER", "postman")
     generated_docs = []
 
     generator = PostmanDocGenerator()
@@ -413,7 +427,6 @@ def main():
 
     if generated_docs:
         generator.generate_index(generated_docs)
-
 
 if __name__ == "__main__":
     main()
