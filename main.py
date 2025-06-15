@@ -124,8 +124,6 @@ class PostmanDocGenerator:
             headers = request.get("header", [])
             body_data = request.get("body", {})
 
-            url_raw = url_raw if not query_params else url_raw.split("?")[0]
-
             body = ""
             if isinstance(body_data, dict):
                 if "raw" in body_data:
