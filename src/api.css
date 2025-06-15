@@ -1,31 +1,17 @@
-.json-highlight {
-    background-color: #f6f8fa;
-    padding: 1em;
-    border-radius: 6px;
-    overflow-x: auto;
-    font-size: 0.9em;
+:root {
+    --background-color: #f5f7fa;
+    --container-bg: #ffffff;
+    --text-color: #2c3e50;
+    --link-color: #2980b9;
+    --border-color: #dfe6ec;
+    --header-border-color: #3498db;
+    --highlight-bg: #f6f8fa;
+    --meta-info-bg: #e8f4fd;
+    --toc-bg: #ffffff;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
-.json-highlight .k {
-    color: #008000;
-}
-
-.json-highlight .s2 {
-    color: #ba2121;
-}
-
-.json-highlight .mi {
-    color: #0000ff;
-}
-
-.json-highlight .p {
-    color: #000000;
-}
-
-.json-highlight .nt {
-    color: #c34e00;
-}
-
+/* === GLOBAL RESET === */
 * {
     margin: 0;
     padding: 0;
@@ -35,79 +21,83 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.6;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #f8f9fa;
+    padding: 24px;
 }
 
+/* === CONTAINER === */
 .container {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    background: var(--container-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 32px;
 }
 
+/* === HEADER === */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 3px solid var(--header-border-color);
 }
 
 .page-header h1 {
-    font-size: 1.8rem;
-    color: #2c3e50;
+    font-size: 2rem;
     font-weight: 700;
 }
 
+/* === BOTÃO VOLTAR === */
 .send-back {
     font-size: 1rem;
-    color: #3498db;
+    color: var(--link-color);
     text-decoration: none;
-    padding: 6px 12px;
-    border: 2px solid #3498db;
+    padding: 8px 14px;
+    border: 2px solid var(--link-color);
     border-radius: 6px;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: 0.2s ease;
     user-select: none;
 }
 
 .send-back:hover,
 .send-back:focus {
-    background-color: #3498db;
+    background-color: var(--link-color);
     color: white;
-    outline: none;
     text-decoration: none;
+    outline: none;
 }
 
-h1 {
-    color: #2c3e50;
-    margin: 0;
+/* === TÍTULOS === */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    margin: 0 0 1.5rem;
 }
 
 h2 {
-    color: #34495e;
-    margin-top: 30px;
-    padding: 10px;
+    font-size: 1.5rem;
     background: #ecf0f1;
-    border-left: 4px solid #3498db;
+    border-left: 4px solid var(--header-border-color);
+    padding: 10px;
 }
 
 h3 {
+    font-size: 1.2rem;
     color: #7f8c8d;
-    margin-top: 20px;
-    margin-bottom: 10px;
 }
 
 h4 {
+    font-size: 1rem;
     color: #27ae60;
-    margin-bottom: 10px;
-    margin-top: 0;
 }
 
+/* === MÉTODOS E URL === */
 .method-div {
     display: flex;
     align-items: center;
@@ -117,50 +107,70 @@ h4 {
 
 .method,
 .url {
-    padding: 4px 8px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-family: monospace;
 }
 
 .method {
-    display: inline-block;
-    border-radius: 4px 0 0 4px;
     color: white;
-    font-weight: bold;
 }
 
 .method.GET {
     background-color: #27ae60;
 }
-
 .method.POST {
     background-color: #e67e22;
 }
-
 .method.PUT {
     background-color: #3498db;
 }
-
 .method.DELETE {
     background-color: #e74c3c;
 }
-
 .method.PATCH {
     background-color: #9b59b6;
 }
 
 .url {
-    font-family: "Monaco", "Menlo", monospace;
-    background: #f4f4f4;
-    border-radius: 0 4px 4px 0;
-    word-break: break-all;
+    background: #f0f0f0;
+    color: var(--text-color);
+    word-break: break-word;
 }
 
+/* === JSON HIGHLIGHT === */
+.json-highlight {
+    background: var(--highlight-bg);
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+
+.json-highlight .s2,
+.json-highlight .k,
+.json-highlight .mi {
+    color: #008000;
+}
+
+.json-highlight .p {
+    color: #0000ff;
+}
+
+.json-highlight .nt {
+    color: #c34e00;
+}
+
+/* === HEADERS & BODY === */
 .headers,
 .body {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 15px;
-    margin: 10px 0;
+    background: var(--highlight-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
 }
 
 .headers ul {
@@ -170,8 +180,8 @@ h4 {
 }
 
 .headers li {
-    padding: 5px 0;
-    border-bottom: 1px solid #eee;
+    padding: 6px 0;
+    border-bottom: 1px solid #e1e1e1;
     font-family: monospace;
 }
 
@@ -179,20 +189,12 @@ h4 {
     border-bottom: none;
 }
 
-pre {
-    background: #2c3e50;
-    color: #111;
-    padding: 15px;
-    border-radius: 4px;
-    overflow-x: auto;
-    font-size: 0.9em;
-}
-
+/* === STATUS === */
 .status {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 4px;
-    color: white;
+    color: #fff;
     font-weight: bold;
     margin-right: 10px;
 }
@@ -200,11 +202,9 @@ pre {
 .status.success {
     background-color: #27ae60;
 }
-
 .status.error {
     background-color: #e74c3c;
 }
-
 .status.warning {
     background-color: #f39c12;
 }
@@ -212,70 +212,76 @@ pre {
 .status.success ~ span {
     color: #27ae60;
 }
-
 .status.error ~ span {
     color: #e74c3c;
 }
-
 .status.warning ~ span {
     color: #f39c12;
 }
 
+/* === DIVISOR === */
 .divider {
     border: none;
     height: 2px;
-    background: linear-gradient(to right, #3498db, transparent);
-    margin: 30px 0;
+    background: linear-gradient(to right, var(--link-color), transparent);
+    margin: 40px 0;
 }
 
+/* === META INFO === */
 .meta-info {
-    background: #e8f4fd;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    border-left: 4px solid #3498db;
+    background: var(--meta-info-bg);
+    padding: 16px;
+    border-left: 4px solid var(--link-color);
+    border-radius: 6px;
+    margin-bottom: 24px;
 }
 
+/* === TABELA DE CONTEÚDO === */
 .toc {
-    background: #f8f9fa;
-    padding: 0 20px;
-    border-radius: 4px;
-    margin-bottom: 30px;
-    border: 1px solid #dee2e6;
+    background: var(--toc-bg);
+    padding: 24px;
+    border-radius: 10px;
+    margin-bottom: 32px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.toc h2 {
+    margin-bottom: 16px;
+    color: var(--text-color);
+    font-size: 1.3rem;
 }
 
 .toc ul {
     list-style: none;
-    padding-left: 20px;
-    margin: 0;
-}
-
-.toc > ul {
     padding-left: 0;
 }
 
 .toc li {
-    margin: 8px 0;
-    line-height: 1.4;
-    width: 100%;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+.toc li.item {
+    margin-left: 24px;
 }
 
 .toc li strong {
-    color: #2c3e50;
-    font-size: 1.1em;
+    color: var(--text-color);
+    font-size: 1.05em;
 }
 
 .toc a {
     text-decoration: none;
-    color: #3498db;
-    padding: 4px 8px;
-    border-radius: 3px;
-    transition: background-color 0.2s;
+    color: var(--link-color);
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
     display: inline-block;
-    width: 100%;
 }
 
 .toc a:hover {
-    background-color: #e3f2fd;
-    text-decoration: none;
+    background-color: var(--link-color);
+    color: white;
+    transform: translateX(5px);
 }

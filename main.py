@@ -48,12 +48,28 @@ class PostmanDocGenerator:
     def _generate_item_id(self, name: str) -> str:
         return name.lower().replace(" ", "-").replace("/", "-")
     
+    def _render_json_block(self, content: Any, type: str, max_length: int = 5000,):
+        if isinstance(content, str) and len(content) > max_length:
+            content = content[:max_length] + "\n..."
+
+        if isinstance(content, str) and content.strip().startswith(('{', '[')):
+            formatted = self._format_json(content)
+        elif isinstance(content, (dict, list)):
+            formatted = self._format_json(json.dumps(content, indent=2, ensure_ascii=False))
+        else:
+            formatted = escape(str(content))
+
+        self.html_output.append('<div class="body">')
+        self.html_output.append(f'<h4>{type.capitalize()} body:</h4>')
+        self.html_output.append(f'<pre class="json-highlight">{formatted}</pre>')
+        self.html_output.append('</div>')
+    
     def _parse_item(self, item: Dict[str, Any]) -> None:
         try:
             request = item.get("request", {})
             method = request.get("method", "GET")
             url_data = request.get("url", {})
-            
+
             if isinstance(url_data, str):
                 url_raw = url_data
             else:
@@ -103,22 +119,7 @@ class PostmanDocGenerator:
                 self.html_output.append('</div>')
             
             if body:
-                self.html_output.append('<div class="body">')
-                self.html_output.append('<h4>Body:</h4>')
-
-                if isinstance(body, str) and body.strip().startswith(('{', '[')):
-                    formatted_body = self._format_json(body)
-                elif isinstance(body, (dict, list)):
-                    import json
-                    formatted_body = self._format_json(json.dumps(body, indent=2, ensure_ascii=False))
-                else:
-                    import html
-                    formatted_body = html.escape(str(body))
-
-                self.html_output.append('<pre class="json-highlight">')
-                self.html_output.append(formatted_body)  
-                self.html_output.append('</pre>')
-                self.html_output.append('</div>')
+                self._render_json_block(body, 'request')
             
             responses = item.get("response", [])
             if responses:
@@ -131,75 +132,105 @@ class PostmanDocGenerator:
                     self.html_output.append(f'<h4><span class="status {status_class}">{status_code}</span><span>{escape(status_text)}</span></h4>')
                     
                     response_headers = response.get("header", [])
+                    response_headers_whitelist = ["Cache-Control", "Content-Type", "Access-Control-Allow-Origin"]
+
                     if response_headers:
                         self.html_output.append('<div class="headers">')
                         self.html_output.append('<h4>Headers:</h4>')
                         self.html_output.append('<ul>')
+
                         for header in response_headers:
-                            key = escape(header.get("key", ""))
-                            value = escape(header.get("value", ""))
-                            self.html_output.append(f'<li><strong>{key}:</strong> {value}</li>')
+                            key = header.get("key", "")
+
+                            if key not in response_headers_whitelist:
+                                continue
+
+                            key_escaped = escape(key)
+                            value_escaped = escape(header.get("value", ""))
+                            self.html_output.append(f'<li><strong>{key_escaped}:</strong> {value_escaped}</li>')
+
                         self.html_output.append('</ul>')
                         self.html_output.append('</div>')
                     
                     response_body = response.get("body", "")
 
                     if response_body:
-                        self.html_output.append('<div class="body">')
-                        self.html_output.append('<h4>Body:</h4>')
-
-                        if isinstance(response_body, str) and response_body.strip().startswith(('{', '[')):
-                            formatted_response = self._format_json(response_body)
-                        elif isinstance(response_body, (dict, list)):
-                            import json
-                            formatted_response = self._format_json(json.dumps(response_body, indent=2, ensure_ascii=False))
-                        else:
-                            import html
-                            formatted_response = html.escape(str(response_body))
-
-                        max_length = 5000
-                        if len(response_body) > max_length:
-                            formatted_response = formatted_response[:max_length] + "\n..."
-
-                        self.html_output.append(f'<pre class="json-highlight">{formatted_response}</pre>')
-                        self.html_output.append('</div>')
+                       self._render_json_block(response_body, 'response')
             
             self.html_output.append('<hr class="divider">')
             
         except Exception as e:
             self.logger.error(f"Erro ao processar item '{item.get('name', 'Desconhecido')}': {e}")
     
-    def _process_items(self, items: List[Dict[str, Any]], level: int = 0) -> List[Dict[str, str]]:
+    def _process_items(self, collection: Dict[str, Any], items: List[Dict[str, Any]], level: int = 0) -> List[Dict[str, str]]:
+        collection_items = collection.get("item", [])
         toc_items = []
-        
+
         for item in items:
-            if "item" in item:
-                
-                folder_name = item.get("name", "Pasta")
+            has_children = "item" in item and isinstance(item["item"], list)
+            folder_name = item.get("name", "Pasta")
+
+            is_folder = any(ci.get("name") == folder_name for ci in collection_items)
+
+            if is_folder:
                 folder_id = self._generate_item_id(folder_name)
-                
+
                 toc_items.append({
-                    "name": folder_name, 
-                    "id": folder_id, 
+                    "name": folder_name,
+                    "id": folder_id,
                     "level": level,
-                    "type": "folder"
+                    "type": "folder",
+                    "method": item.get("request", {}).get("method", None)
                 })
-                
-                self.html_output.append(f'<h2 id="{folder_id}" style="margin-top: 40px; color: #2c3e50;">📁 {escape(folder_name)}</h2>')
-                
+
+                if not item.get("request"):
+                    self.html_output.append(
+                        f'<h2 id="{folder_id}" style="margin-top: 40px; color: #2c3e50;">📁 {escape(folder_name)}</h2>'
+                    )
+
                 folder_desc = item.get("description", "")
                 if folder_desc:
-                    self.html_output.append(f'<p style="font-style: italic; color: #7f8c8d;">{escape(folder_desc)}</p>')
-                
-                folder_toc = self._process_items(item["item"], level + 1)
-                toc_items.extend(folder_toc)
+                    self.html_output.append(
+                        f'<p style="font-style: italic; color: #7f8c8d;">{escape(folder_desc)}</p>'
+                    )
+
+                if has_children:
+                    folder_toc = self._process_items(collection, item["item"], level + 1)
+                    toc_items.extend(folder_toc)
+
+                if item.get("request"):
+                    self._parse_item(item)
+
             else:
                 item_name = item.get("name", "Sem nome")
                 item_id = self._generate_item_id(item_name)
-                toc_items.append({"name": item_name, "id": item_id, "level": level, "type": "item"})
+
+                toc_items.append({
+                    "name": item_name,
+                    "id": item_id,
+                    "level": level,
+                    "type": "item",
+                    "method": item.get("request", {}).get("method", None)
+                })
+
                 self._parse_item(item)
-        
+
         return toc_items
+
+    
+    def _get_method_icon(self, method: str) -> str:
+        """Get icon for HTTP method"""
+        icons = {
+            "GET": "🔍",
+            "POST": "📝",
+            "PUT": "✏️",
+            "DELETE": "🗑️",
+            "PATCH": "🔧",
+            "HEAD": "👀",
+            "OPTIONS": "⚙️"
+        }
+
+        return icons.get(method.upper(), "📡")
     
     def _generate_toc(self, toc_items: List[Dict[str, str]]) -> List[str]:
         if not toc_items:
@@ -208,26 +239,38 @@ class PostmanDocGenerator:
         toc_html = []
         toc_html.append('<div class="toc">')
         toc_html.append('<h2>📋 Índice</h2>')
-        toc_html.append('<ul>')
-        
-        current_folder = None
+
+        current_level = 0
+        toc_html.append('<ul>') 
+
         for item in toc_items:
-            if item.get("type") == "folder":
-                if current_folder:
-                    toc_html.append('</ul>')
-                toc_html.append(f'<li><strong>{escape(item["name"])}</strong></li>')
-                toc_html.append('<ul>')
-                current_folder = item["name"]
+            level = item.get("level", 0)
+            name = escape(item.get("name", ""))
+            item_id = item.get("id", "")
+            item_type = item.get("type", "item")
+            method = item.get("method", "")
+
+            while current_level < level:
+                toc_html.append('  ' * current_level + '<ul>')
+                current_level += 1
+
+            while current_level > level:
+                current_level -= 1
+                toc_html.append('  ' * current_level + '</ul>')
+
+            if item_type == "folder":
+                toc_html.append('  ' * current_level + f'<li><strong>📁 <a href="#{item_id}">{name}</a></strong></li>')
             else:
-                indent = "  " * item["level"]
-                toc_html.append(f'{indent}<li><a href="#{item["id"]}">{escape(item["name"])}</a></li>')
-        
-        if current_folder:
-            toc_html.append('</ul>')
-        
+                method_icon = self._get_method_icon(method)
+                toc_html.append('  ' * current_level + f'<li class="item">{method_icon} <a href="#{item_id}">{name}</a></li>')
+
+        while current_level > 0:
+            current_level -= 1
+            toc_html.append('  ' * current_level + '</ul>')
+
         toc_html.append('</ul>')
         toc_html.append('</div>')
-        
+
         return toc_html
     
     def generate_documentation(self, json_file_path: str) -> None:
@@ -280,11 +323,10 @@ class PostmanDocGenerator:
         
         items = collection.get("item", [])
         if items:
-            
             temp_html = self.html_output.copy()  
             self.html_output = []  
             
-            toc_items = self._process_items(items)
+            toc_items = self._process_items(collection, items)
             items_html = self.html_output.copy()  
             
             self.html_output = temp_html
