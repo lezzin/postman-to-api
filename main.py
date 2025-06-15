@@ -1,4 +1,5 @@
 import json, logging, os
+from dotenv import load_dotenv, find_dotenv
 
 from pathlib import Path
 from html import escape
@@ -8,6 +9,8 @@ from datetime import datetime
 from pygments import highlight
 from pygments.lexers import JsonLexer
 from pygments.formatters import HtmlFormatter
+
+load_dotenv(find_dotenv(), override=True)   
 
 class PostmanDocGenerator:
     def __init__(self, output_file: str = "docs.html"):
@@ -131,8 +134,8 @@ class PostmanDocGenerator:
                     
                     self.html_output.append(f'<h4><span class="status {status_class}">{status_code}</span><span>{escape(status_text)}</span></h4>')
                     
+                    response_headers_whitelist = [h.strip().lower() for h in os.getenv("REQUEST_HEADERS_WHITELIST").split(",") if h.strip()]
                     response_headers = response.get("header", [])
-                    response_headers_whitelist = ["Cache-Control", "Content-Type", "Access-Control-Allow-Origin"]
 
                     if response_headers:
                         self.html_output.append('<div class="headers">')
@@ -142,7 +145,7 @@ class PostmanDocGenerator:
                         for header in response_headers:
                             key = header.get("key", "")
 
-                            if key not in response_headers_whitelist:
+                            if str(key).lower() not in response_headers_whitelist:
                                 continue
 
                             key_escaped = escape(key)
