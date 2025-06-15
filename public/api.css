@@ -1,4 +1,6 @@
 :root {
+    --sidebar-width: 350px;
+
     --white: 255 255 255;
     --black: 0 0 0;
     --background-color: 245 247 250;
@@ -78,15 +80,17 @@ body {
 
 .right-content {
     flex: 1;
-    margin-left: 300px;
+    margin-left: var(--sidebar-width);
 }
 
 .right-content-data {
-    padding: 24px;
+    padding-inline: 24px;
+    width: calc(100vw - var(--sidebar-width) - 24px);
+    overflow: hidden;
 }
 
 .sidebar {
-    width: 300px;
+    width: var(--sidebar-width);
     background: rgb(var(--gray-light));
     border-right: 1px solid rgb(var(--gray-border));
     position: fixed;
@@ -102,6 +106,7 @@ body {
 }
 
 .sidebar h2 {
+    background: rgb(var(--gray-light));
     color: rgb(var(--text-color));
     padding: 10px;
     font-size: 1.2em;
@@ -120,10 +125,12 @@ body {
     padding: 2px 0;
     display: flex;
     width: 100%;
+    font-weight: 500;
 }
 
 .sidebar li.item {
     padding-left: 20px;
+    font-weight: 400;
 }
 
 .sidebar a {
@@ -310,16 +317,26 @@ h4 {
     background: rgb(var(--gray-light));
     border-radius: 0 4px 4px 0;
     color: rgb(var(--text-color));
-    word-break: break-word;
+
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .json-highlight {
     background: rgb(var(--highlight-bg));
     padding: 1em;
     border-radius: 6px;
-    overflow-x: auto;
     font-size: 0.9em;
     font-family: monospace;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+    width: 100%;
+
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 .json-highlight .s2,
@@ -336,6 +353,92 @@ h4 {
     color: rgb(var(--orange));
 }
 
+.json-highlight .w {
+    color: rgb(var(--text-color)) !important;
+}
+
+.description {
+    font-size: 0.95em;
+    color: rgb(var(--text-color));
+    padding: 1em;
+    background-color: rgb(var(--gray-lighter));
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 6px;
+    margin: 2rem 0 1.5em;
+}
+
+.description h1,
+.description h2,
+.description h3,
+.description h4,
+.description h5,
+.description h6 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.description h1 {
+    font-size: 1.5em;
+}
+.description h2 {
+    font-size: 1.3em;
+}
+.description h3 {
+    font-size: 1.15em;
+}
+.description h4 {
+    font-size: 1.05em;
+}
+.description h5 {
+    font-size: 1em;
+}
+.description h6 {
+    font-size: 0.95em;
+}
+
+.description p {
+    margin: 0.5em 0;
+}
+
+.description ul,
+.description ol {
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+}
+
+.description li {
+    margin-bottom: 0.25em;
+}
+
+.description code {
+    background: rgb(var(--highlight-bg));
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.95em;
+}
+
+.description pre {
+    background: rgb(var(--highlight-bg));
+    padding: 1em;
+    overflow-x: auto;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-family: monospace;
+    margin: 1em 0;
+}
+
+.description a {
+    color: rgb(var(--blue));
+    text-decoration: none;
+}
+
+.description a:hover {
+    text-decoration: underline;
+}
+
 .headers,
 .body {
     background: rgb(var(--highlight-bg));
@@ -343,6 +446,7 @@ h4 {
     border-radius: 6px;
     padding: 16px;
     margin: 16px 0;
+    overflow-x: hidden;
 }
 
 .headers ul {
