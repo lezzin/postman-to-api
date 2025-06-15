@@ -302,8 +302,8 @@ class PostmanDocGenerator:
             return []
         
         toc_html = []
-        toc_html.append('<div class="toc">')
         toc_html.append('<h2>📋 Índice</h2>')
+        toc_html.append('<input id="search-input" placeholder="🔍 Pesquisar por item..." />')
 
         current_level = 0
         toc_html.append('<ul class="toc-list">') 
@@ -338,7 +338,6 @@ class PostmanDocGenerator:
             toc_html.append('  ' * current_level + '</ul>')
 
         toc_html.append('</ul>')
-        toc_html.append('</div>')
 
         return toc_html
     
@@ -417,7 +416,7 @@ class PostmanDocGenerator:
                 📚 {collection_name}
             </h1>
             <div>
-                <button onclick="toggleTheme(this)" class="send-back theme" title="Alternar tema">🌑 Escuro</button>
+                <button onclick="toggleTheme()" class="send-back theme" title="Alternar tema">🌑 Escuro</button>
                 <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>
             </div>
         </header>

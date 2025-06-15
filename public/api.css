@@ -124,19 +124,31 @@ body {
     box-shadow: 2px 0 5px rgba(var(--black), 0.1);
 }
 
-.sidebar .toc-list {
-    padding-inline: 20px;
-    padding-bottom: 32px;
-}
-
 .sidebar h2 {
     background: rgb(var(--gray-light));
     color: rgb(var(--text-color));
     padding: 10px;
     font-size: 1.2em;
     border-bottom: 2px solid rgb(var(--gray-border));
+    margin-bottom: 0;
     position: sticky;
     top: 0;
+}
+
+#search-input {
+    background-color: rgb(var(--gray-lighter));
+    width: 100%;
+    border: none;
+    color: rgb(var(--text-color));
+    padding: 12px;
+    margin-bottom: 10px;
+    outline: none;
+    font: inherit;
+}
+
+.sidebar .toc-list {
+    padding-inline: 20px;
+    padding-bottom: 32px;
 }
 
 .sidebar ul {
