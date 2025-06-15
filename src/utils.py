@@ -4,10 +4,10 @@ from pygments import highlight
 from pygments.lexers import JsonLexer
 from pygments.formatters import HtmlFormatter
 
-def get_css_styles(file: str) -> str:
+def get_file(file: str, tag: str) -> str:
     with open(file, 'r', encoding='utf-8') as f:
-        css_content = f.read()
-    return f"<style>{css_content}</style>"
+        file_content = f.read()
+    return f"<{tag}>{file_content}</{tag}>"
 
 def format_json(json_data: str) -> str:
     try:

@@ -1,35 +1,52 @@
+:root {
+    --text-color: 51 51 51;
+    --background-color: 248 249 250;
+    --container-bg: 255 255 255;
+    --heading-color: 44 62 80;
+    --heading-border: 52 152 219;
+    --link-color: 52 152 219;
+    --link-hover-bg: 227 242 253;
+    --link-hover-color: 26 115 232;
+    --shadow-color: 0 0 0;
+}
+
+/* === RESET === */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* === BODY === */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: rgb(var(--text-color));
+    background-color: rgb(var(--background-color));
+}
+
+/* === CONTAINER === */
+.container {
+    background: rgb(var(--container-bg));
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(var(--shadow-color), 0.1);
+    padding: 30px 40px;
+
     max-width: 900px;
     margin: 40px auto;
-    padding: 0 20px;
 }
 
-.container {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px 40px;
-}
-
+/* === TÍTULOS === */
 h1 {
-    color: #2c3e50;
-    border-bottom: 3px solid #3498db;
+    color: rgb(var(--heading-color));
+    border-bottom: 3px solid rgb(var(--heading-border));
     padding-bottom: 10px;
     margin-bottom: 1.5rem;
     font-weight: 700;
     font-size: 2rem;
 }
 
+/* === LISTAS === */
 ul {
     list-style: none;
     padding-left: 0;
@@ -37,11 +54,13 @@ ul {
 
 li {
     margin: 0.7rem 0;
+    font-weight: 500;
     width: 100%;
 }
 
+/* === LINKS === */
 a {
-    color: #3498db;
+    color: rgb(var(--link-color));
     font-size: 1.15rem;
     text-decoration: none;
     padding: 6px 10px;
@@ -53,8 +72,8 @@ a {
 
 a:hover,
 a:focus {
-    background-color: #e3f2fd;
-    color: #1a73e8;
+    background-color: rgb(var(--link-hover-bg));
+    color: rgb(var(--link-hover-color));
     text-decoration: none;
     outline: none;
 }

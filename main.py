@@ -267,7 +267,7 @@ class PostmanDocGenerator:
             "<meta charset='utf-8'>",
             "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
             f"<title>Documentação das APIs - {collection_name}</title>",
-            get_css_styles('public/api.css'),
+            get_file('public/api.css', 'style'),
             "</head>",
             "<body>",
             "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
@@ -292,7 +292,7 @@ class PostmanDocGenerator:
                 "<meta charset='utf-8'>",
                 "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
                 f"<title>Documentação das APIs - {collection_name}</title>",
-                get_css_styles('public/api.css'),
+                get_file('public/api.css', 'style'),
                 "</head>",
                 "<body>",
                 "<button class='sidebar-toggle' onclick='toggleSidebar()'>☰</button>",
@@ -307,14 +307,20 @@ class PostmanDocGenerator:
             self.html_output.append('<div class="toc"><h2>📋 Índice</h2><p>Nenhum item encontrado.</p></div>')
         self.html_output.append('</div>')
         
-        self.html_output.append('<div class="content">')
+        self.html_output.append('<div class="right-content">')
+        
         self.html_output.append(f"""
         <header class="page-header">
             <h1>📚 {collection_name}</h1>
-            <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>
+            <div>
+                <button onclick="toggleTheme(this)" class="send-back theme" title="Alternar tema">🌑 Escuro</button>
+                <a href="index.html" class="send-back" title="Voltar ao índice">🏠 Voltar</a>
+            </div>
         </header>
         """)
-        
+
+        self.html_output.append('<div class="right-content-data">')
+
         if collection_description or collection_version:
             self.html_output.append('<div class="meta-info">')
             if collection_description:
@@ -332,30 +338,9 @@ class PostmanDocGenerator:
         
         self.html_output.append('</div>')  
         self.html_output.append('</div>')
+        self.html_output.append('</div>')
         
-        self.html_output.append("""
-        <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
-        
-        document.querySelectorAll('.sidebar a[href^="#"]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                
-                // Fechar sidebar no mobile após clicar
-                if (window.innerWidth <= 768) {
-                    document.getElementById('sidebar').classList.remove('active');
-                }
-            });
-        });
-        </script>
-        """)
+        self.html_output.append(get_file("public/api.js", 'script'))
         
         self.html_output.extend([
             "</body>",
@@ -379,7 +364,7 @@ class PostmanDocGenerator:
             f.write("  <meta charset='UTF-8'>\n")
             f.write("  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
             f.write("  <title>Documentação das APIs - Índice</title>\n")
-            f.write(get_css_styles('public/index.css'))
+            f.write(get_file('public/index.css', 'style'))
             f.write("</head>\n<body>\n")
             f.write("<div class='container'>\n")
             f.write("<h1>Documentação das APIs</h1>\n<ul>\n")
@@ -387,7 +372,7 @@ class PostmanDocGenerator:
             for doc in generated_docs:
                 file = escape(doc["file"])
                 title = escape(doc["title"])
-                f.write(f"<li><a href='{file}' rel='noopener noreferrer'>{title}</a></li>\n")
+                f.write(f"<li><a href='{file}' rel='noopener noreferrer'>📁 {title}</a></li>\n")
 
             f.write("</ul>\n</div>\n</body>\n</html>")
 
