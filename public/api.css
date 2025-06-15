@@ -196,12 +196,13 @@ body {
 }
 
 .sidebar-toggle {
+    width: 3rem;
+    aspect-ratio: 1;
     display: none;
     background: rgb(var(--blue));
     color: rgb(var(--white));
-    padding: 4px 10px;
+    font-size: 1.5rem;
     border-radius: 5px;
-    z-index: 999;
 }
 
 @media (max-width: 768px) {
