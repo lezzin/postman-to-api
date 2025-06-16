@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from postman_doc_generator import PostmanDocGenerator
 
+
 def main():
     folder = os.getenv("POSTMAN_FOLDER", "postman")
     generated_docs = []
