@@ -10,8 +10,8 @@ from typing import Dict, List, Any
 from dotenv import load_dotenv, find_dotenv
 
 from src.utils import *
-from html_generator import HTMLGenerator
-from content_processor import ContentProcessor
+from src.html_generator import HTMLGenerator
+from src.content_processor import ContentProcessor
 
 load_dotenv(find_dotenv(), override=True)   
 

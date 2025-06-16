@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from postman_doc_generator import PostmanDocGenerator
+from src.postman_doc_generator import PostmanDocGenerator
 
 
 def main():
